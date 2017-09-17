@@ -47,7 +47,6 @@ For most common usages,  ``bibit`` is recommended because it is fast.
   bibit -t on black hole entropy
   ```
 
-  ​
 
 #### 1.2  biball
 
@@ -71,6 +70,6 @@ That's it!
 
 
 
-##X. License 
+## X. License 
 
 *This software comes with ABSOLUTELY NO WARRANTY. This is a free software, and you are welcome to redistribute it under certain conditions. See the General Public License for details.*
