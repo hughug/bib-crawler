@@ -41,7 +41,7 @@ For most common usages,  ``bibit`` is recommended because it is fast.
   bibit -e 1707.05319
   ```
 
-- Search using the title of a paper
+- Search using the title of a paper, for instance, "on black hole entropy"
 
   ```shell
   bibit -t on black hole entropy
@@ -50,7 +50,7 @@ For most common usages,  ``bibit`` is recommended because it is fast.
 
 #### 1.2  biball
 
-If *bibit* does not return the correct bib entry, this means more than one records have been found.  Then ``biball`` should be used.
+If ``bibit`` does not return the correct bib entry, this means more than one records have been found.  Then ``biball`` should be used.
 
 - Search using the eprint number (arXiv) number of a paper
 
