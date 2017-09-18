@@ -2,6 +2,9 @@
 # extracting bibtex from INSPIRE-HEP
 # Baoyi Chen 2017
 
+# Get local directory
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
 # search using arxiv number 
 search_eprint() {
     arxiv_number=$1
@@ -31,7 +34,7 @@ biball() {
         -e)
             eprint_number="${@:2}"
             search_eprint $eprint_number
-            count=$(python bibcount.py $search_eprint_result)
+            count=$(python $DIR/bibcount.py $search_eprint_result)
             echo "$count record(s) found"
 
             if [ "$count" == 0 ]
@@ -44,19 +47,18 @@ biball() {
                 echo "--------------------------------------"
                 End=$(($count - 1))
                 for i in $(seq 0 $End); do
-                    result=$(python getbib.py $search_eprint_result $i 2>&1)
+                    result=$(python $DIR/getbib.py $search_eprint_result $i 2>&1)
                     echo "$result"
                 done
                 echo "--------------------------------------"
-                # search for local .bib file and ask for saving 
-                if [ -e *.bib ]; then         
+                # search for local .bib file and ask for saving       
                     for j in $(find *.bib); do
                         echo "Local bib file found: $j" 
                         while true; do
                         read -p "Do you wish to save the bibtex to this file? [y/n]: " yn
                             case $yn in
                                 [Yy]* ) read -p "Which entry? [#]: " ne
-                                    echo -e "$(python getbib.py $search_eprint_result $((ne-1)) 2>&1)" >>"$j"        
+                                    echo -e "$(python $DIR/getbib.py $search_eprint_result $((ne-1)) 2>&1)" >>"$j"        
                                     echo "Saved" 
                                     break;;
                                 [Nn]* ) break;;
@@ -64,7 +66,6 @@ biball() {
                             esac
                         done
                     done
-                fi
             fi
             # if more then 5 (including 5) records found, ask for more accurate search
             if [ "$count" -ge 5 ]
@@ -76,7 +77,7 @@ biball() {
         -t)
             title_name="${@:2}"
             search_title $title_name
-            count=$(python bibcount.py $search_title_result)
+            count=$(python $DIR/bibcount.py $search_title_result)
             echo "$count record(s) found"
 
             if [ "$count" == 0 ]
@@ -90,19 +91,18 @@ biball() {
                 echo "--------------------------------------"
                 End=$(($count - 1))
                 for i in $(seq 0 $End); do
-                    result=$(python getbib.py $search_title_result $i 2>&1)
+                    result=$(python $DIR/getbib.py $search_title_result $i 2>&1)
                     echo "$result"
                 done
                 echo "--------------------------------------"
-                # search for local .bib file and ask for saving 
-                if [ -e *.bib ]; then         
+                # search for local .bib file and ask for saving      
                     for j in $(find *.bib); do
                         echo "Local bib file found: $j" 
                         while true; do
                         read -p "Do you wish to save the bibtex to this file? [y/n]: " yn
                             case $yn in
                                 [Yy]* ) read -p "Which entry? [#]: " ne
-                                    echo -e "$(python getbib.py $search_eprint_result $((ne-1)) 2>&1)" >>"$j"        
+                                    echo -e "$(python $DIR/getbib.py $search_eprint_result $((ne-1)) 2>&1)" >>"$j"        
                                     echo "Saved" 
                                     break;;
                                 [Nn]* ) break;;
@@ -110,7 +110,6 @@ biball() {
                             esac
                         done
                     done
-                fi
             fi
             
             # if more then 5 (including 5) records found, ask for more accurate search
@@ -133,48 +132,56 @@ bibit() {
         -e)
             eprint_number="${@:2}"
             search_eprint $eprint_number
-            result=$(python getbib.py $search_eprint_result 0 2>&1)
+            result=$(python $DIR/getbib.py $search_eprint_result 0 2>&1)
             echo "--------------------------------------"
             echo "$result"
             echo "--------------------------------------"
-            # search for local .bib file and ask for saving 
-            if [ -e *.bib ]; then           
+            flag=0
+            # search for local .bib file and ask for saving      
                 for i in $(find *.bib); do 
                     echo "Local bib file found: $i" 
                     while true; do
                     read -p "Do you wish to save the bibtex to this file? [y/n]: " yn
                         case $yn in
-                            [Yy]* ) echo -e "$result" >>"$i"; echo "Saved" ; break;;
+                            [Yy]* ) echo -e "$result" >>"$i"; echo "Saved" ; flag=1; break;;
                             [Nn]* ) break;;
                                * ) echo "Please answer yes or no.";;
                         esac
                     done
+                    # Note: this break may not be suitable for all usages
+                    # break if the results have been saved (when multiple bibtex are present.)
+                    if [ $flag == 1 ]; then 
+                        break
+                    fi
                 done
-            fi
             ;;
         # search using the title
         -t)
             title_name="${@:2}"
             search_title $title_name
-            count=$(python bibcount.py $search_title_result)
-            result=$(python getbib.py $search_title_result 0 2>&1)
+            count=$(python $DIR/bibcount.py $search_title_result)
+            result=$(python $DIR/getbib.py $search_title_result 0 2>&1)
             echo "--------------------------------------"
             echo "$result"
             echo "--------------------------------------"
-            # search for local .bib file and ask for saving  
-            if [ -e *.bib ]; then          
+            flag=0
+            # search for local .bib file and ask for saving         
                 for i in $(find *.bib); do 
                     echo "Local bib file found: $i" 
                     while true; do
                     read -p "Do you wish to save the bibtex to this file? [y/n]: " yn
                         case $yn in
-                            [Yy]* ) echo -e "$result" >>"$i"; echo "Saved" ; break;;
+                            [Yy]* ) echo -e "$result" >>"$i"; echo "Saved" ; flag=1; break;;
                             [Nn]* ) break;;
                                 * ) echo "Please answer yes or no.";;
                         esac
                     done
+                    # Note: this break may not be suitable for all usages
+                    # break if the results have been saved (when multiple bibtex are present.)
+                    if [ $flag == 1 ]; then 
+                        break
+                    fi                    
                 done
-            fi
             ;;
         # unknown parameters
         *)
