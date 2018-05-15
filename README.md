@@ -2,7 +2,7 @@
 
 A bibtex scraper from command line
 
-
+![alt text](sample.png)
 
 ## 0. Dependencies
 
